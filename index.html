@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1>Screen Capture</h1>
-    <button onclick="startCapture()">Capture Area</button>
-    <script src="renderer.js"></script>
-  </body>
+<body>
+  <button onclick="startCapture()">Capture Area</button>
+
+  <h2>Crop</h2>
+  <label>X: <input type="number" id="cropX" value="0" /></label>
+  <label>Y: <input type="number" id="cropY" value="0" /></label>
+  <label>Width: <input type="number" id="cropW" value="640" /></label>
+  <label>Height: <input type="number" id="cropH" value="480" /></label>
+  <button onclick="cropVideo()">Crop</button>
+
+  <script src="renderer.js"></script>
+</body>
+
 </html>

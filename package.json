@@ -1,0 +1,17 @@
+{
+  "name": "cap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@skyra/gifenc": "^1.0.1",
+    "canvas": "^3.1.2",
+    "electron": "^37.2.6",
+    "fluent-ffmpeg": "^2.1.3"
+  }
+}

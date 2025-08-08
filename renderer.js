@@ -2,6 +2,8 @@ const { captureArea } = require('./capture');
 const { exec } = require('child_process');
 const path = require('path');
 
+const capFile = "input.mp4";
+
 window.startCapture = () => {
   captureArea({
     x: 100,
@@ -9,8 +11,13 @@ window.startCapture = () => {
     width: 800,
     height: 600,
     duration: 5,
-    output: 'my-capture.mp4'
+    output: capFile
   });
+  setTimeout(() => {
+    const video = document.getElementById('videoPreview');
+    video.src = capFile;
+    video.load();
+  }, 6000); // match your capture duration
 };
 
 // Crop logic
@@ -24,7 +31,14 @@ window.cropVideo = () => {
   const output = path.join(__dirname, 'cropped.mp4');
 
   exec(`ffmpeg -i "${input}" -filter:v "crop=${w}:${h}:${x}:${y}" -c:a copy "${output}"`, (err) => {
-    if (err) console.error('Crop failed:', err);
-    else console.log('Crop complete');
+    if (err) {
+      console.error('Crop failed:', err);
+    } else {
+      console.log('Crop complete');
+      const video = document.getElementById('videoPreview');
+      video.src = 'cropped.mp4';
+      video.load();
+    }
+    
   });
 };

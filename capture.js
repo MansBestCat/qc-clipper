@@ -1,22 +1,23 @@
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 
-function captureArea({ x, y, width, height, duration = 10, 
-    output = 'capture.mp4' }) {
-  const command = ffmpeg()
-    .input('desktop') // Windows only; use `x11grab` or `avfoundation` for Linux/macOS
-    .inputFormat('gdigrab') // Windows-specific
+function captureArea({ x = 0, y = 0, width = 640, height = 480, duration = 10, output = 'capture.mp4' }) {
+  const outputPath = path.join(__dirname, output);
+  console.log('Starting capture to:', outputPath);
+
+  ffmpeg()
+    .input(`:0.0+${x},${y}`) // Linux display + offset
+    .inputFormat('x11grab')
     .inputOptions([
-      `-offset_x ${x}`,
-      `-offset_y ${y}`,
       `-video_size ${width}x${height}`,
       `-framerate 30`,
+      `-draw_mouse 1`,
     ])
     .duration(duration)
-    .output(path.join(__dirname, output))
+    .output(outputPath)
     .on('start', cmd => console.log('FFmpeg started:', cmd))
-    .on('end', () => console.log('Capture finished'))
-    .on('error', err => console.error('FFmpeg error:', err))
+    .on('end', () => console.log('✅ Capture finished:', outputPath))
+    .on('error', err => console.error('❌ FFmpeg error:', err.message))
     .run();
 }
 

@@ -3,21 +3,30 @@ const { exec } = require('child_process');
 const path = require('path');
 
 const capFile = "input.mp4";
+let ffmpegCommand = null;
 
 window.startCapture = () => {
-  captureArea({
+  ffmpegCommand = captureArea({
     x: 100,
     y: 100,
     width: 800,
     height: 600,
-    duration: 5,
-    output: capFile
+    output: capFile,
+    manual: true
   });
+};
+
+window.stopCapture = () => {
+ if (ffmpegCommand) {
+    ffmpegCommand.kill('SIGINT'); // sends Ctrl+C to FFmpeg
+    console.log('Capture stopped');
+  }
+  // Wait a moment for FFmpeg to finish writing the file
   setTimeout(() => {
     const video = document.getElementById('videoPreview');
-    video.src = capFile;
+    video.src = 'input.mp4';
     video.load();
-  }, 6000); // match your capture duration
+  }, 2000);
 };
 
 // Crop logic

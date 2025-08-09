@@ -55,19 +55,22 @@ window.cropVideo = () => {
 
 
 window.exportToWebP = () => {
-  const input = path.join(__dirname, 'cropped.mp4');
-  const output = path.join(__dirname, 'output.webp');
+  const frameDir = path.join(__dirname, 'frames');
+  const outputPath = path.join(__dirname, 'output.webp');
 
-  const cmd = `ffmpeg -i "${input}" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${output}"`;
+  // Build FFmpeg command
+  const cmd = `ffmpeg -y -framerate 30 -i "${frameDir}/frame_%03d.png" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
 
   exec(cmd, (err) => {
     if (err) {
       console.error('❌ WebP export failed:', err);
     } else {
-      console.log('✅ WebP export complete:', output);
-      // Optionally preview it
+      console.log('✅ WebP export complete:', outputPath);
+
+      // Optional: show preview
       const img = document.createElement('img');
       img.src = 'output.webp';
+      img.width = 640;
       document.body.appendChild(img);
     }
   });

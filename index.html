@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-<body>  
+<body>
+
+  <h2>Capture</h2>
   <button onclick="startCapture()">Start Capture</button>
   <button onclick="stopCapture()">Stop Capture</button>
-
 
   <h2>Crop</h2>
   <label>X: <input type="number" id="cropX" value="0" size="3"/></label>
@@ -14,6 +15,10 @@
 
   <h2>Preview</h2>
   <video id="videoPreview" width="640" controls></video>
+
+  <h2>Export</h2>
+  <button onclick="exportToWebP()">Export to WebP</button>
+
 
   <script src="renderer.js"></script>
 </body>

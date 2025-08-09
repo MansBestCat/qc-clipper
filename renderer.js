@@ -51,6 +51,8 @@ window.cropVideo = () => {
     
   });
 
+};
+
 
 window.exportToWebP = () => {
   const input = path.join(__dirname, 'cropped.mp4');
@@ -69,6 +71,4 @@ window.exportToWebP = () => {
       document.body.appendChild(img);
     }
   });
-};
-
 };

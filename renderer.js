@@ -72,3 +72,58 @@ window.exportToWebP = () => {
     }
   });
 };
+
+window.extractFrames = () => {
+  const cmd = `ffmpeg -i cropped.mp4 frames/frame_%03d.png`;
+  exec(cmd, (err) => {
+    if (err) console.error('❌ Frame extraction failed:', err);
+    else {
+      console.log('✅ Frames extracted');
+      loadFrames();
+    }
+  });
+};
+let frames = [];
+let currentFrame = 0;
+
+function loadFrames() {
+  const fs = require('fs');
+  const path = require('path');
+  const frameDir = path.join(__dirname, 'frames');
+
+  frames = fs.readdirSync(frameDir)
+    .filter(f => f.endsWith('.png'))
+    .sort()
+    .map(f => path.join(frameDir, f));
+
+  currentFrame = 0;
+  showFrame(currentFrame);
+}
+
+function showFrame(index) {
+  const img = document.getElementById('framePreview');
+  img.src = frames[index];
+}
+
+window.nextFrame = () => {
+  if (currentFrame < frames.length - 1) {
+    currentFrame++;
+    showFrame(currentFrame);
+  }
+};
+
+window.prevFrame = () => {
+  if (currentFrame > 0) {
+    currentFrame--;
+    showFrame(currentFrame);
+  }
+};
+
+window.deleteFrame = () => {
+  const fs = require('fs');
+  fs.unlinkSync(frames[currentFrame]);
+  frames.splice(currentFrame, 1);
+  if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+  showFrame(currentFrame);
+};
+

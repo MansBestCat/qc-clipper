@@ -38,8 +38,11 @@ window.cropVideo = () => {
 
   const input = path.join(__dirname, 'input.mp4');
   const output = path.join(__dirname, 'cropped.mp4');
+  
+  const cmd = `ffmpeg -y -i "${input}" -filter:v "crop=${w}:${h}:${x}:${y}" -c:a copy "${output}"`;
+  console.log(cmd);
 
-  exec(`ffmpeg -i "${input}" -filter:v "crop=${w}:${h}:${x}:${y}" -c:a copy "${output}"`, (err) => {
+  exec(cmd, (err) => {
     if (err) {
       console.error('Crop failed:', err);
     } else {
@@ -60,6 +63,7 @@ window.exportToWebP = () => {
 
   // Build FFmpeg command
   const cmd = `ffmpeg -y -framerate 30 -i "${frameDir}/frame_%03d.png" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
+  console.log(cmd);
 
   exec(cmd, (err) => {
     if (err) {
@@ -77,7 +81,9 @@ window.exportToWebP = () => {
 };
 
 window.extractFrames = () => {
-  const cmd = `ffmpeg -i cropped.mp4 frames/frame_%03d.png`;
+  const cmd = `ffmpeg -y -i cropped.mp4 frames/frame_%03d.png`;
+  console.log(cmd);
+  
   exec(cmd, (err) => {
     if (err) console.error('❌ Frame extraction failed:', err);
     else {

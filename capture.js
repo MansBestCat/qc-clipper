@@ -1,6 +1,7 @@
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
-function captureArea({ x = 0, y = 0, width = 640, height = 480, output = 'capture.mp4' }) {
+
+function captureArea({ x = 0, y = 0, width = 800, height = 600, output = 'capture.mp4' }) {
   const outputPath = path.join(__dirname, output);
   console.log('Starting capture to:', outputPath);
 

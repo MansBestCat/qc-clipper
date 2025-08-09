@@ -7,8 +7,8 @@ let ffmpegCommand = null;
 
 window.startCapture = () => {
   ffmpegCommand = captureArea({
-    x: 100,
-    y: 100,
+    x: 0,
+    y: 0,
     width: 800,
     height: 600,
     output: capFile,

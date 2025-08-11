@@ -5,8 +5,8 @@ const path = require('path');
 const capFile = "input.mp4";
 let ffmpegCommand = null;
 
-const videoCapture = document.getElementById('videoCapture');
-const videoCropped = document.getElementById('videoCropped');
+let videoCapture;
+let videoCropped;
 
 window.startCapture = () => {
   ffmpegCommand = captureArea({
@@ -94,6 +94,9 @@ window.extractFrames = () => {
     }
   });
 };
+
+
+
 let frames = [];
 let currentFrame = 0;
 
@@ -139,9 +142,44 @@ window.deleteFrame = () => {
 };
 
 window.onload = () => {
+
+  videoCapture = document.getElementById('videoCapture');
+  videoCropped = document.getElementById('videoCropped');
+
+  videoCapture.addEventListener('loadedmetadata', () =>  {
+    const width = videoCapture.videoWidth;
+    const height = videoCapture.videoHeight;
+
+    videoCapture.width = width;
+    videoCapture.height = height;
+
+    const videoContainer = document.getElementById('videoCaptureContainer');
+    videoContainer.style.width = `${width}px`;
+    videoContainer.style.height = `${height}px`;
+
+    console.log(`Captured video dimensions: ${width}x${height}`);
+  });
+
+  videoCropped.addEventListener('loadedmetadata', () =>  {
+    const width = videoCropped.videoWidth;
+    const height = videoCropped.videoHeight;
+
+    videoCropped.width = width;
+    videoCropped.height = height;
+
+    const framePreview = document.getElementById('framePreview');
+    framePreview.width = width;
+
+    const videoContainer = document.getElementById('videoCroppedContainer');
+    videoContainer.style.width = `${width}px`;
+    videoContainer.style.height = `${height}px`;
+
+    console.log(`Cropped video dimensions: ${width}x${height}`);
+  });
+
   // Crop overlay interaction logic
   const cropOverlay = document.getElementById('cropOverlay');
-  const videoContainer = document.getElementById('videoContainer');
+  const videoContainer = document.getElementById('videoCaptureContainer');
   let startX, startY, isDrawing = false;
 
   videoContainer.addEventListener('mousedown', (e) => {

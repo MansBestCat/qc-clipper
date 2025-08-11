@@ -8,7 +8,7 @@
       pointer-events: none;
       display: none;
     }
-    #videoContainer {
+    #videoCaptureContainer {
       position: relative;
       display: inline-block;
     }
@@ -17,30 +17,40 @@
 <body>
 
   <h2>Capture</h2>
-  <button onclick="startCapture()">Start Capture</button>
-  <button onclick="stopCapture()">Stop Capture</button>
-  
-  <div id="videoContainer">
+  <div style="display:flex;">
+    <button onclick="startCapture()">Start Capture</button>
+    <button onclick="stopCapture()">Stop Capture</button>
+  </div>
+  <div id="videoCaptureContainer">
     <video id="videoCapture" width="640" controls></video>
     <div id="cropOverlay"></div>
   </div>
 
   <h2>Crop</h2>
-  <button onclick="cropVideo()">Crop</button>
-  <video id="videoCropped" width="640" controls></video>
+  <div style="display:flex;">
+    <button onclick="cropVideo()">Crop</button>
+  </div>
+  <div id="videoCroppedContainer">
+    <video id="videoCropped" width="640" controls></video>
+  </div>
    
   <h2>Extract and load</h2>
-  <button onclick="extractFrames()">Extract and load frames</button>
-
+  <div style="display:flex;">
+      <button onclick="extractFrames()">Extract and load frames</button>
+  </div>
+  
   <h2>Frames</h2>
   <img id="framePreview" width="640" />
-  <button onclick="prevFrame()">← Prev</button>
-  <button onclick="nextFrame()">Next →</button>
-  <button onclick="deleteFrame()">🗑️ Delete</button>
-  
+  <div style="display:flex;">  
+    <button onclick="prevFrame()">← Prev</button>
+    <button onclick="nextFrame()">Next →</button>
+    <button onclick="deleteFrame()">🗑️ Delete</button>
+  </div>
   
   <h2>Export</h2>
-  <button onclick="exportToWebP()">Export to WebP</button>
+  <div style="display:flex;">
+    <button onclick="exportToWebP()">Export to WebP</button>
+  </div>
 
 
   <script src="renderer.js"></script>

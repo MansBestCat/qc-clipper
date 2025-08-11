@@ -6,6 +6,7 @@ const capFile = "input.mp4";
 let ffmpegCommand = null;
 
 const videoCapture = document.getElementById('videoCapture');
+const videoCropped = document.getElementById('videoCropped');
 
 window.startCapture = () => {
   ffmpegCommand = captureArea({
@@ -49,7 +50,6 @@ window.cropVideo = () => {
       console.error('Crop failed:', err);
     } else {
       console.log('Crop complete');
-      const videoCropped = document.getElementById('videoCropped');
       videoCropped.src = 'cropped.mp4';
       videoCropped.load();
     }

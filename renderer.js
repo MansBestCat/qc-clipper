@@ -65,7 +65,7 @@ window.exportToWebP = () => {
   const outputPath = path.join(__dirname, 'output.webp');
 
   // Build FFmpeg command
-  const cmd = `ffmpeg -y -framerate 30 -i "${frameDir}/frame_%03d.png" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
+  const cmd = `ffmpeg -y -framerate 30 -pattern_type glob -i "${frameDir}/frame_*.png" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
   console.log(cmd);
 
   exec(cmd, (err) => {

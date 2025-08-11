@@ -17,7 +17,7 @@ window.startCapture = () => {
 };
 
 window.stopCapture = () => {
- if (ffmpegCommand) {
+  if (ffmpegCommand) {
     ffmpegCommand.kill('SIGINT'); // sends Ctrl+C to FFmpeg
     console.log('Capture stopped');
   }
@@ -29,16 +29,17 @@ window.stopCapture = () => {
   }, 2000);
 };
 
-// Crop logic
 window.cropVideo = () => {
-  const x = document.getElementById('cropX').value;
-  const y = document.getElementById('cropY').value;
-  const w = document.getElementById('cropW').value;
-  const h = document.getElementById('cropH').value;
+  const rect = cropOverlay.getBoundingClientRect();
+  const videoRect = videoPreview.getBoundingClientRect();
+  const x = Math.round(rect.left - videoRect.left);
+  const y = Math.round(rect.top - videoRect.top);
+  const w = Math.round(rect.width);
+  const h = Math.round(rect.height);
 
   const input = path.join(__dirname, 'input.mp4');
   const output = path.join(__dirname, 'cropped.mp4');
-  
+
   const cmd = `ffmpeg -y -i "${input}" -filter:v "crop=${w}:${h}:${x}:${y}" -c:a copy "${output}"`;
   console.log(cmd);
 
@@ -51,7 +52,7 @@ window.cropVideo = () => {
       video.src = 'cropped.mp4';
       video.load();
     }
-    
+
   });
 
 };
@@ -83,7 +84,7 @@ window.exportToWebP = () => {
 window.extractFrames = () => {
   const cmd = `ffmpeg -y -i cropped.mp4 frames/frame_%03d.png`;
   console.log(cmd);
-  
+
   exec(cmd, (err) => {
     if (err) console.error('❌ Frame extraction failed:', err);
     else {
@@ -136,3 +137,42 @@ window.deleteFrame = () => {
   showFrame(currentFrame);
 };
 
+window.onload = () => {
+  // Crop overlay interaction logic
+  const cropOverlay = document.getElementById('cropOverlay');
+  const videoContainer = document.getElementById('videoContainer');
+  let startX, startY, isDrawing = false;
+
+  videoContainer.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    startX = e.offsetX;
+    startY = e.offsetY;
+
+    cropOverlay.style.left = `${startX}px`;
+    cropOverlay.style.top = `${startY}px`;
+    cropOverlay.style.width = '0px';
+    cropOverlay.style.height = '0px';
+    cropOverlay.style.display = 'block';
+  });
+
+  videoContainer.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+
+    const currentX = e.offsetX;
+    const currentY = e.offsetY;
+
+    const rectX = Math.min(startX, currentX);
+    const rectY = Math.min(startY, currentY);
+    const rectW = Math.abs(currentX - startX);
+    const rectH = Math.abs(currentY - startY);
+
+    cropOverlay.style.left = `${rectX}px`;
+    cropOverlay.style.top = `${rectY}px`;
+    cropOverlay.style.width = `${rectW}px`;
+    cropOverlay.style.height = `${rectH}px`;
+  });
+
+  videoContainer.addEventListener('mouseup', () => {
+    isDrawing = false;
+  });
+};

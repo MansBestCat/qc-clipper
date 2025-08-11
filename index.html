@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <style>
+    #cropOverlay {
+      position: absolute;
+      border: 2px dashed red;
+      pointer-events: none;
+      display: none;
+    }
+    #videoContainer {
+      position: relative;
+      display: inline-block;
+    }
+  </style>  
+</head>
 <body>
 
   <h2>Capture</h2>
@@ -7,16 +21,14 @@
   <button onclick="stopCapture()">Stop Capture</button>
 
   <h2>Crop</h2>
-  <label>X: <input type="number" id="cropX" value="0" size="3"/></label>
-  <label>Y: <input type="number" id="cropY" value="0" size="3"/></label>
-  <label>Width: <input type="number" id="cropW" value="640" size="3"/></label>
-  <label>Height: <input type="number" id="cropH" value="480" size="3"/></label>
   <button onclick="cropVideo()">Crop</button>
 
-  <h2>Preview</h2>
-  <video id="videoPreview" width="640" controls></video>
+  <div id="videoContainer">
+    <video id="videoPreview" width="640" controls></video>
+    <div id="cropOverlay"></div>
+  </div>
 
-    <h2>Extract and load</h2>
+  <h2>Extract and load</h2>
   <button onclick="extractFrames()">Extract and load frames</button>
 
   <h2>Frames</h2>

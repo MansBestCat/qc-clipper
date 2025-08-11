@@ -1,13 +1,13 @@
 {
-  "name": "cap",
-  "version": "1.0.0",
-  "description": "",
+  "name": "qc-clipper",
+  "version": "1.0.1",
+  "description": "Multi frame screen capture in support of Armor Skirmish",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Mans Best Cat",
+  "license": "MIT",
   "dependencies": {
     "@skyra/gifenc": "^1.0.1",
     "canvas": "^3.1.2",

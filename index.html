@@ -19,15 +19,16 @@
   <h2>Capture</h2>
   <button onclick="startCapture()">Start Capture</button>
   <button onclick="stopCapture()">Stop Capture</button>
-
-  <h2>Crop</h2>
-  <button onclick="cropVideo()">Crop</button>
-
+  
   <div id="videoContainer">
-    <video id="videoPreview" width="640" controls></video>
+    <video id="videoCapture" width="640" controls></video>
     <div id="cropOverlay"></div>
   </div>
 
+  <h2>Crop</h2>
+  <button onclick="cropVideo()">Crop</button>
+  <video id="videoCropped" width="640" controls></video>
+   
   <h2>Extract and load</h2>
   <button onclick="extractFrames()">Extract and load frames</button>
 

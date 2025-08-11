@@ -5,6 +5,8 @@ const path = require('path');
 const capFile = "input.mp4";
 let ffmpegCommand = null;
 
+const videoCapture = document.getElementById('videoCapture');
+
 window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
@@ -23,17 +25,16 @@ window.stopCapture = () => {
   }
   // Wait a moment for FFmpeg to finish writing the file
   setTimeout(() => {
-    const video = document.getElementById('videoPreview');
-    video.src = 'input.mp4';
-    video.load();
+    videoCapture.src = 'input.mp4';
+    videoCapture.load();
   }, 2000);
 };
 
 window.cropVideo = () => {
   const rect = cropOverlay.getBoundingClientRect();
-  const videoRect = videoPreview.getBoundingClientRect();
-  const x = Math.round(rect.left - videoRect.left);
-  const y = Math.round(rect.top - videoRect.top);
+  const videoCaptureRect = videoCapture.getBoundingClientRect();
+  const x = Math.round(rect.left - videoCaptureRect.left);
+  const y = Math.round(rect.top - videoCaptureRect.top);
   const w = Math.round(rect.width);
   const h = Math.round(rect.height);
 
@@ -48,9 +49,9 @@ window.cropVideo = () => {
       console.error('Crop failed:', err);
     } else {
       console.log('Crop complete');
-      const video = document.getElementById('videoPreview');
-      video.src = 'cropped.mp4';
-      video.load();
+      const videoCropped = document.getElementById('videoCropped');
+      videoCropped.src = 'cropped.mp4';
+      videoCropped.load();
     }
 
   });

@@ -1,7 +1,9 @@
 const { captureArea } = require('./capture');
 const { exec } = require('child_process');
 const path = require('path');
-
+const fs = require('fs');
+const frameDir = path.join(__dirname, 'frames');
+  
 const capFile = "input.mp4";
 let ffmpegCommand = null;
 
@@ -60,7 +62,6 @@ window.cropVideo = () => {
 
 
 window.exportToWebP = () => {
-  const frameDir = path.join(__dirname, 'frames');
   const outputPath = path.join(__dirname, 'output.webp');
 
   // Build FFmpeg command
@@ -83,6 +84,20 @@ window.exportToWebP = () => {
 };
 
 window.extractFrames = () => {
+
+  try {
+    const files = fs.readdirSync(frameDir);
+    for (const file of files) {
+      if (file.endsWith('.png')) {
+        fs.unlinkSync(path.join(frameDir, file));
+      }
+    }
+    console.log('🧹 Cleared old frames');
+  } catch (err) {
+    console.error('❌ Failed to clean frame directory:', err);
+    return;
+  }
+
   const cmd = `ffmpeg -y -i cropped.mp4 frames/frame_%03d.png`;
   console.log(cmd);
 
@@ -101,9 +116,6 @@ let frames = [];
 let currentFrame = 0;
 
 function loadFrames() {
-  const fs = require('fs');
-  const path = require('path');
-  const frameDir = path.join(__dirname, 'frames');
 
   frames = fs.readdirSync(frameDir)
     .filter(f => f.endsWith('.png'))

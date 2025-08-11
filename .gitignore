@@ -1,5 +1,7 @@
 node_modules
 package-lock.json
+frames
+frame_list.txt
 *.mp4
 *.webp
-frames
+*.png

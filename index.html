@@ -41,12 +41,28 @@
   
   <h2>Frames</h2>
   <img id="framePreview" width="640" />
+  <div id="filmstrip" style="display: flex; gap: 4px; margin-top: 10px;"></div>
   <div style="display:flex;">  
     <button onclick="prevFrame()">← Prev</button>
     <button onclick="nextFrame()">Next →</button>
     <button onclick="deleteFrame()">🗑️ Delete</button>
   </div>
-  
+  <div style="display:flex;">
+    <button id="previewToggleBtn"
+     onclick="togglePreviewAnimation()">▶️ Play</button>
+    <button onclick="togglePreviewLoop()">🔁 Toggle Loop</button>
+    <label>Speed:
+      <select onchange="setPreviewSpeed(parseInt(this.value))">
+        <option value="10">10 FPS</option>
+        <option value="15">15 FPS</option>
+        <option value="24">24 FPS</option>
+        <option value="30" selected>30 FPS</option>
+        <option value="60">60 FPS</option>
+      </select>
+    </label>
+  </div>
+
+
   <h2>Export</h2>
   <div style="display:flex;">
     <button onclick="exportToWebP()">Export to WebP</button>

@@ -10,6 +10,10 @@ let ffmpegCommand = null;
 let videoCapture;
 let videoCropped;
 
+let previewInterval = null;
+let previewFPS = 30;
+let previewLoop = true;
+
 window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
@@ -63,9 +67,14 @@ window.cropVideo = () => {
 
 window.exportToWebP = () => {
   const outputPath = path.join(__dirname, 'output.webp');
+  const listPath = path.join(__dirname, 'frame_list.txt');
 
-  // Build FFmpeg command
-  const cmd = `ffmpeg -y -framerate 30 -pattern_type glob -i "${frameDir}/frame_*.png" -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
+  // Write frame list
+  const listContent = frames.map(f => `file '${f.replace(/\\/g, '/')}'`).join('\n');
+  fs.writeFileSync(listPath, listContent);
+
+  // Build FFmpeg command using list
+  const cmd = `ffmpeg -y -f concat -safe 0 -i "${listPath}" -framerate 30 -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
   console.log(cmd);
 
   exec(cmd, (err) => {
@@ -74,7 +83,6 @@ window.exportToWebP = () => {
     } else {
       console.log('✅ WebP export complete:', outputPath);
 
-      // Optional: show preview
       const img = document.createElement('img');
       img.src = 'output.webp';
       img.width = 640;
@@ -123,15 +131,43 @@ function loadFrames() {
     .map(f => path.join(frameDir, f));
 
   currentFrame = 0;
+  renderFilmstrip();
   showFrame(currentFrame);
 }
 
 function showFrame(index) {
   const img = document.getElementById('framePreview');
   img.src = frames[index];
+
+  // Highlight current frame in filmstrip
+  const thumbs = document.querySelectorAll('#filmstrip img');
+  thumbs.forEach((thumb, i) => {
+    thumb.style.border = i === index ? '2px solid red' : '1px solid #ccc';
+  });
+}
+
+function renderFilmstrip() {
+  const strip = document.getElementById('filmstrip');
+  strip.innerHTML = ''; // Clear previous
+
+  frames.forEach((framePath, i) => {
+    const thumb = document.createElement('img');
+    thumb.src = framePath;
+    thumb.width = 80;
+    thumb.style.cursor = 'pointer';
+    thumb.style.border = i === currentFrame ? '2px solid red' : '1px solid #ccc';
+
+    thumb.onclick = () => {
+      currentFrame = i;
+      showFrame(currentFrame);
+    };
+
+    strip.appendChild(thumb);
+  });
 }
 
 window.nextFrame = () => {
+  stopPreviewAnimation();
   if (currentFrame < frames.length - 1) {
     currentFrame++;
     showFrame(currentFrame);
@@ -139,6 +175,7 @@ window.nextFrame = () => {
 };
 
 window.prevFrame = () => {
+  stopPreviewAnimation();
   if (currentFrame > 0) {
     currentFrame--;
     showFrame(currentFrame);
@@ -146,10 +183,10 @@ window.prevFrame = () => {
 };
 
 window.deleteFrame = () => {
-  const fs = require('fs');
   fs.unlinkSync(frames[currentFrame]);
   frames.splice(currentFrame, 1);
   if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+  renderFilmstrip();
   showFrame(currentFrame);
 };
 
@@ -226,4 +263,56 @@ window.onload = () => {
   videoContainer.addEventListener('mouseup', () => {
     isDrawing = false;
   });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') window.nextFrame();
+    else if (e.key === 'ArrowLeft') window.prevFrame();
+  });
+
+  window.startPreviewAnimation = () => {
+    if (previewInterval || frames.length === 0) return;
+
+    let i = 0;
+    previewInterval = setInterval(() => {
+      showFrame(i);
+      i++;
+      if (i >= frames.length) {
+        if (previewLoop) i = 0;
+        else stopPreviewAnimation();
+      }
+    }, 1000 / previewFPS);
+  };
+
+  window.stopPreviewAnimation = () => {
+    clearInterval(previewInterval);
+    previewInterval = null;
+  };
+
+  window.setPreviewSpeed = (fps) => {
+    previewFPS = fps;
+    if (previewInterval) restartPreviewAnimation();
+  };
+
+  window.togglePreviewLoop = () => {
+    previewLoop = !previewLoop;
+    console.log(`🔁 Loop is now ${previewLoop ? 'enabled' : 'disabled'}`);
+  };
+
+  function stopPreviewAnimation() {
+    clearInterval(previewInterval);
+    previewInterval = null;
+    const btn = document.getElementById('previewToggleBtn');
+    if (btn) btn.textContent = '▶️ Play';
+  }
+
+  window.togglePreviewAnimation = () => {
+    if (previewInterval) {
+      stopPreviewAnimation();
+      document.getElementById('previewToggleBtn').textContent = '▶️ Play';
+    } else {
+      startPreviewAnimation();
+      document.getElementById('previewToggleBtn').textContent = '⏹️ Stop';
+    }
+  };
+
 };

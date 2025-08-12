@@ -192,7 +192,10 @@ function renderFilmstrip() {
     if (frame.selected || i === currentFrame) {
       container.classList.add('selected-frame');
     }
-    container.onpointerdown = (e) => handlePointerClick( e, i);
+    container.onpointerdown = (e) => {
+      handlePointerClick( e, i);
+      showFrame(currentFrame);
+    }
 
     const thumb = document.createElement('img');
     thumb.src = frame.file;
@@ -200,11 +203,6 @@ function renderFilmstrip() {
     thumb.style.cursor = 'pointer';
     thumb.style.display = "block";
     thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
-    
-    thumb.onclick = () => {
-      currentFrame = i;
-      showFrame(currentFrame);
-    };
 
     const durationInput = document.createElement('input');
     durationInput.type = 'number';

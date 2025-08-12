@@ -327,6 +327,8 @@ window.onload = () => {
       currentFrame = frames.length - 1;
       showFrame(currentFrame);
       renderFilmstrip();
+    } else if (e.code === 'Space' ) {
+        window.togglePreviewAnimation();
     }
   });
 

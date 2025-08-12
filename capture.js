@@ -1,7 +1,7 @@
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 
-function captureArea({ x = 0, y = 0, width = 800, height = 600, output = 'capture.mp4' }) {
+function captureArea({ x , y , width , height, output, fps }) {
   const outputPath = path.join(__dirname, output);
   console.log('Starting capture to:', outputPath);
 
@@ -10,7 +10,7 @@ function captureArea({ x = 0, y = 0, width = 800, height = 600, output = 'captur
     .inputFormat('x11grab')
     .inputOptions([
       `-video_size ${width}x${height}`,
-      `-framerate 30`,
+      `-framerate ${fps}`,
       `-draw_mouse 1`,
     ])
     .output(outputPath)

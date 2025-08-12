@@ -24,10 +24,10 @@ window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
     y: 0,
-    width: 800,
-    height: 600,
+    width: 960,
+    height: 1080,
     output: capFile,
-    manual: true
+    fps: defaultFPS
   });
 };
 

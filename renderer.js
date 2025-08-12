@@ -64,8 +64,30 @@ window.cropVideo = () => {
 
 };
 
-window.buildWebpmuxAnimation = () => {
-  const outputPath = path.join(__dirname, 'output.webp');
+function exportAnimation() {
+  const filenameInput = document.getElementById('outputFilename');
+  let filename = filenameInput.value.trim();
+
+  if (!filename) {
+    alert('Please enter a filename.');
+    return;
+  }
+
+  if (!filename.endsWith('.webp')) {
+    filename += '.webp';
+  }
+
+  // Check if file exists (Node.js-style, adjust if browser-only)
+  if (fs.existsSync(filename) && !confirm(`"${filename}" already exists. Overwrite?`)) {
+    return;
+  }
+
+  buildWebpmuxAnimation(filename);
+}
+
+
+window.buildWebpmuxAnimation = (filename) => {
+  const outputPath = path.join(__dirname, filename);
 
   // Build command
   const frameArgs = frames.map(f => {

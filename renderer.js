@@ -20,6 +20,8 @@ let currentFrame = 0;
 let undoStack = [];
 let redoStack = [];
 
+let clipboardFrames = [];
+
 window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
@@ -203,7 +205,7 @@ function renderFilmstrip() {
     thumb.style.cursor = 'pointer';
     thumb.style.display = "block";
     thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
-
+    
     const durationInput = document.createElement('input');
     durationInput.type = 'number';
     durationInput.min = 1;
@@ -361,6 +363,10 @@ window.onload = () => {
       window.undo();
     } else if (e.ctrlKey && e.key === 'y') {
       window.redo();
+    } else if (e.ctrlKey && e.key === 'c') {
+      window.copySelectedFrames();
+    } else if (e.ctrlKey && e.key === 'v') {
+      window.pasteFramesAtCurrent();
     }
   });
 
@@ -429,6 +435,31 @@ window.onload = () => {
     currentFrame = Math.min(currentFrame, frames.length - 1);
     renderFilmstrip();
     showFrame(currentFrame);
+  };
+
+  window.copySelectedFrames = () => {
+    clipboardFrames = frames.filter(f => f.selected).map(f => ({
+      ...f,
+      file: f.file, // Keep reference to the same file
+      duration: f.duration,
+      selected: false
+    }));
+    console.log(`📋 Copied ${clipboardFrames.length} frame(s)`);
+  };
+
+  window.pasteFramesAtCurrent = () => {
+    if (clipboardFrames.length === 0) return;
+
+    pushUndoState(); // Save current state
+
+    frames.splice(currentFrame +1, 0, ...clipboardFrames.map(f => ({ ...f })));
+
+    // Optional: move currentFrame to the end of pasted section
+    //currentFrame += clipboardFrames.length;
+
+    renderFilmstrip();
+    showFrame(currentFrame);
+    console.log(`📌 Pasted ${clipboardFrames.length} frame(s) at index ${currentFrame}`);
   };
 
 };

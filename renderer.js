@@ -146,7 +146,7 @@ function loadFrames() {
     .sort()
     .map(f => ({
       file: path.join(frameDir, f),
-      duration: defaultFPS
+      duration: 1000 / defaultFPS
     }));
 
   currentFrame = 0;

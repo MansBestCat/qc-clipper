@@ -264,10 +264,15 @@ window.onload = () => {
     isDrawing = false;
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') window.nextFrame();
-    else if (e.key === 'ArrowLeft') window.prevFrame();
-  });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') {
+    window.nextFrame();
+  } else if (e.key === 'ArrowLeft') {
+    window.prevFrame();
+  } else if (e.key === 'Delete') {
+    window.deleteFrame();
+  }
+});
 
   window.startPreviewAnimation = () => {
     if (previewInterval || frames.length === 0) return;

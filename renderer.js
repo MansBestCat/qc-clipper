@@ -17,6 +17,9 @@ let previewLoop = true;
 let frames = [];
 let currentFrame = 0;
 
+let undoStack = [];
+let redoStack = [];
+
 window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
@@ -224,8 +227,15 @@ window.prevFrame = () => {
   }
 };
 
+function pushUndoState() {
+  undoStack.push(JSON.parse(JSON.stringify(frames)));
+  // Clear redo stack on new action
+  redoStack = [];
+}
+
 window.deleteFrame = () => {
-  fs.unlinkSync(frames[currentFrame].file);
+  if (frames.length === 0) return;
+  pushUndoState(); // Save current state
   frames.splice(currentFrame, 1);
   if (currentFrame >= frames.length) currentFrame = frames.length - 1;
   renderFilmstrip();
@@ -327,6 +337,10 @@ window.onload = () => {
       renderFilmstrip();
     } else if (e.code === 'Space' ) {
         window.togglePreviewAnimation();
+    } else if (e.ctrlKey && e.key === 'z') {
+      window.undo();
+    } else if (e.ctrlKey && e.key === 'y') {
+      window.redo();
     }
   });
 
@@ -373,6 +387,28 @@ window.onload = () => {
       startPreviewAnimation();
       document.getElementById('previewToggleBtn').textContent = '⏹️ Stop';
     }
+  };
+
+  window.undo = () => {
+    if (undoStack.length === 0) return;
+
+    redoStack.push(JSON.parse(JSON.stringify(frames)));
+    frames = undoStack.pop();
+
+    currentFrame = Math.min(currentFrame, frames.length - 1);
+    renderFilmstrip();
+    showFrame(currentFrame);
+  };
+
+  window.redo = () => {
+    if (redoStack.length === 0) return;
+
+    undoStack.push(JSON.parse(JSON.stringify(frames)));
+    frames = redoStack.pop();
+
+    currentFrame = Math.min(currentFrame, frames.length - 1);
+    renderFilmstrip();
+    showFrame(currentFrame);
   };
 
 };

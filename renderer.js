@@ -173,6 +173,18 @@ function showFrame(index) {
   });
 }
 
+function handlePointerClick(event, index) {
+  if (event.shiftKey) {
+    const anchor = frames.findIndex(f => f.selected);
+    const [start, end] = [anchor, index].sort((a, b) => a - b);
+    frames.forEach((f, i) => f.selected = i >= start && i <= end);
+  } else {
+    frames.forEach((f, i) => f.selected = i === index);
+  }
+  currentFrame = index;
+  renderFilmstrip();
+}
+
 function renderFilmstrip() {
   const strip = document.getElementById('filmstrip');
   strip.innerHTML = ''; // Clear previous
@@ -182,6 +194,10 @@ function renderFilmstrip() {
     container.style.display = 'inline-block';
     container.style.textAlign = 'center';
     container.style.marginRight = '8px';
+    if (frame.selected || i === currentFrame) {
+      container.classList.add('selected-frame');
+    }
+    container.onpointerdown = (e) => handlePointerClick( e, i);
 
     const thumb = document.createElement('img');
     thumb.src = frame.file;
@@ -233,11 +249,19 @@ function pushUndoState() {
   redoStack = [];
 }
 
-window.deleteFrame = () => {
+window.delete = () => {
   if (frames.length === 0) return;
+
+  const hasSelection = frames.some(f => f.selected);
   pushUndoState(); // Save current state
-  frames.splice(currentFrame, 1);
-  if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+
+  if (hasSelection) {
+    frames = frames.filter(f => !f.selected);
+    currentFrame = Math.min(currentFrame, frames.length - 1);
+  } else {
+    frames.splice(currentFrame, 1);
+    currentFrame = Math.max(0, currentFrame - 1);
+  }
   renderFilmstrip();
   showFrame(currentFrame);
 };
@@ -326,7 +350,7 @@ window.onload = () => {
     } else if (e.key === 'ArrowLeft') {
       window.prevFrame();
     } else if (e.key === 'Delete') {
-      window.deleteFrame();
+      window.delete();
     } else if (e.key === 'Home') {
       currentFrame = 0;
       showFrame(currentFrame);

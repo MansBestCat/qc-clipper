@@ -23,7 +23,10 @@
       display: inline-flex;
       gap: 4px; /* spacing between frames */
     }
-
+    .selected-frame {
+      border: 2px dashed #00bfff;
+      background-color: rgba(0, 191, 255, 0.1);
+    }
   </style>  
 </head>
 <body>
@@ -61,7 +64,7 @@
   <div style="display:flex;">  
     <button onclick="prevFrame()">← Prev</button>
     <button onclick="nextFrame()">Next →</button>
-    <button onclick="deleteFrame()">🗑️ Delete</button>
+    <button onclick="delete()">Delete</button>
   </div>
   <div style="display:flex;">
     <button id="previewToggleBtn"

@@ -164,7 +164,7 @@ function showFrame(index) {
   // Highlight current frame in filmstrip
   const thumbs = document.querySelectorAll('#filmstrip img');
   thumbs.forEach((thumb, i) => {
-    thumb.style.border = i === index ? '2px solid red' : '1px solid #ccc';
+    thumb.style.border = i === index ? '4px solid red' : '1px solid #ccc';
   });
 }
 
@@ -199,7 +199,7 @@ function renderFilmstrip() {
     thumb.width = 80;
     thumb.style.cursor = 'pointer';
     thumb.style.display = "block";
-    thumb.style.border = i === currentFrame ? '2px solid red' : '1px solid #ccc';
+    thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
     
     thumb.onclick = () => {
       currentFrame = i;

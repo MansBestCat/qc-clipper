@@ -108,11 +108,6 @@ window.buildWebpmuxAnimation = (filename) => {
       console.error('❌ webpmux animation failed:', err);
     } else {
       console.log('✅ Animated WebP created:', outputPath);
-
-      const img = document.createElement('img');
-      img.src = 'output.webp';
-      img.width = 640;
-      document.body.appendChild(img);
     }
   });
 };
@@ -341,7 +336,10 @@ window.onload = () => {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) {
+    if (
+      ['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key) ||
+      ['Space'].includes(e.code)
+    ) {
       e.preventDefault(); // Stop browser from scrolling the page
     }
 

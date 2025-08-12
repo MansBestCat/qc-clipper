@@ -64,24 +64,26 @@ window.cropVideo = () => {
 
 };
 
-
-window.exportToWebP = () => {
+window.buildWebpmuxAnimation = () => {
   const outputPath = path.join(__dirname, 'output.webp');
-  const listPath = path.join(__dirname, 'frame_list.txt');
 
-  // Write frame list
-  const listContent = frames.map(f => `file '${f.replace(/\\/g, '/')}'`).join('\n');
-  fs.writeFileSync(listPath, listContent);
+  // Default duration per frame (can be customized per frame later)
+  const defaultDuration = 100;
 
-  // Build FFmpeg command using list
-  const cmd = `ffmpeg -y -f concat -safe 0 -i "${listPath}" -framerate 30 -vcodec libwebp -loop 0 -preset default -an -vsync 0 "${outputPath}"`;
+  // Build command
+  const frameArgs = frames.map(f => {
+    const duration = defaultDuration; // Replace with per-frame logic if needed
+    return `-frame "${f}" +${duration}`;
+  }).join(' ');
+
+  const cmd = `webpmux ${frameArgs} -loop 0 -o "${outputPath}"`;
   console.log(cmd);
 
   exec(cmd, (err) => {
     if (err) {
-      console.error('❌ WebP export failed:', err);
+      console.error('❌ webpmux animation failed:', err);
     } else {
-      console.log('✅ WebP export complete:', outputPath);
+      console.log('✅ Animated WebP created:', outputPath);
 
       const img = document.createElement('img');
       img.src = 'output.webp';
@@ -96,7 +98,7 @@ window.extractFrames = () => {
   try {
     const files = fs.readdirSync(frameDir);
     for (const file of files) {
-      if (file.endsWith('.png')) {
+      if (file.endsWith('.webp')) {
         fs.unlinkSync(path.join(frameDir, file));
       }
     }
@@ -106,7 +108,7 @@ window.extractFrames = () => {
     return;
   }
 
-  const cmd = `ffmpeg -y -i cropped.mp4 frames/frame_%03d.png`;
+  const cmd = `ffmpeg -y -i cropped.mp4 -vsync 0 -c:v libwebp -compression_level 6 -quality 85 frames/frame_%03d.webp`;
   console.log(cmd);
 
   exec(cmd, (err) => {
@@ -126,7 +128,7 @@ let currentFrame = 0;
 function loadFrames() {
 
   frames = fs.readdirSync(frameDir)
-    .filter(f => f.endsWith('.png'))
+    .filter(f => f.endsWith('.webp'))
     .sort()
     .map(f => path.join(frameDir, f));
 

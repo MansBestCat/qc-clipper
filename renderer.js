@@ -72,8 +72,7 @@ window.buildWebpmuxAnimation = () => {
 
   // Build command
   const frameArgs = frames.map(f => {
-    const duration = defaultDuration; // Replace with per-frame logic if needed
-    return `-frame "${f}" +${duration}`;
+    return `-frame "${f.file}" +${f.duration}`;
   }).join(' ');
 
   const cmd = `webpmux ${frameArgs} -loop 0 -o "${outputPath}"`;
@@ -130,7 +129,10 @@ function loadFrames() {
   frames = fs.readdirSync(frameDir)
     .filter(f => f.endsWith('.webp'))
     .sort()
-    .map(f => path.join(frameDir, f));
+    .map(f => ({
+      file: path.join(frameDir, f),
+      duration: 100 // default duration
+    }));
 
   currentFrame = 0;
   renderFilmstrip();
@@ -139,7 +141,7 @@ function loadFrames() {
 
 function showFrame(index) {
   const img = document.getElementById('framePreview');
-  img.src = frames[index];
+  img.src = frames[index].file;
 
   // Highlight current frame in filmstrip
   const thumbs = document.querySelectorAll('#filmstrip img');
@@ -152,19 +154,37 @@ function renderFilmstrip() {
   const strip = document.getElementById('filmstrip');
   strip.innerHTML = ''; // Clear previous
 
-  frames.forEach((framePath, i) => {
+  frames.forEach((frame, i) => {
+    const container = document.createElement('div');
+    container.style.display = 'inline-block';
+    container.style.textAlign = 'center';
+    container.style.marginRight = '8px';
+
     const thumb = document.createElement('img');
-    thumb.src = framePath;
+    thumb.src = frame.file;
     thumb.width = 80;
     thumb.style.cursor = 'pointer';
+    thumb.style.display = "block";
     thumb.style.border = i === currentFrame ? '2px solid red' : '1px solid #ccc';
-
+    
     thumb.onclick = () => {
       currentFrame = i;
       showFrame(currentFrame);
     };
 
-    strip.appendChild(thumb);
+    const durationInput = document.createElement('input');
+    durationInput.type = 'number';
+    durationInput.min = 1;
+    durationInput.value = frame.duration;
+    durationInput.style.width = '60px';
+    durationInput.style.marginTop = '4px';
+    durationInput.onchange = (e) => {
+      frames[i].duration = parseInt(e.target.value, 10);
+    };
+
+    container.appendChild(thumb);
+    container.appendChild(durationInput);
+    strip.appendChild(container);
   });
 }
 

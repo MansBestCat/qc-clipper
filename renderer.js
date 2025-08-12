@@ -112,7 +112,7 @@ window.buildWebpmuxAnimation = (filename) => {
   });
 };
 
-window.extractFrames = () => {
+window.extractAndLoadFrames = () => {
 
   try {
     const files = fs.readdirSync(frameDir);

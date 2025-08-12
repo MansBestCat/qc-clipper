@@ -12,6 +12,18 @@
       position: relative;
       display: inline-block;
     }
+    #filmstrip-container {
+      margin-top: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      width: 100%;
+      max-height: 120px;
+    }
+    #filmstrip {
+      display: inline-flex;
+      gap: 4px; /* spacing between frames */
+    }
+
   </style>  
 </head>
 <body>
@@ -41,7 +53,11 @@
   
   <h2>Frames</h2>
   <img id="framePreview" width="640" />
-  <div id="filmstrip" style="display: flex; gap: 4px; margin-top: 10px;"></div>
+
+  <div id="filmstrip-container">
+    <div id="filmstrip" >  </div>
+  </div>
+
   <div style="display:flex;">  
     <button onclick="prevFrame()">← Prev</button>
     <button onclick="nextFrame()">Next →</button>

@@ -11,7 +11,7 @@ let videoCapture;
 let videoCropped;
 
 let previewInterval = null;
-let previewFPS = 30;
+let defaultFPS = 30;
 let previewLoop = true;
 
 window.startCapture = () => {
@@ -66,9 +66,6 @@ window.cropVideo = () => {
 
 window.buildWebpmuxAnimation = () => {
   const outputPath = path.join(__dirname, 'output.webp');
-
-  // Default duration per frame (can be customized per frame later)
-  const defaultDuration = 100;
 
   // Build command
   const frameArgs = frames.map(f => {
@@ -131,7 +128,7 @@ function loadFrames() {
     .sort()
     .map(f => ({
       file: path.join(frameDir, f),
-      duration: 100 // default duration
+      duration: defaultFPS
     }));
 
   currentFrame = 0;
@@ -205,7 +202,7 @@ window.prevFrame = () => {
 };
 
 window.deleteFrame = () => {
-  fs.unlinkSync(frames[currentFrame]);
+  fs.unlinkSync(frames[currentFrame].file);
   frames.splice(currentFrame, 1);
   if (currentFrame >= frames.length) currentFrame = frames.length - 1;
   renderFilmstrip();
@@ -311,7 +308,7 @@ window.onload = () => {
         if (previewLoop) i = 0;
         else stopPreviewAnimation();
       }
-    }, 1000 / previewFPS);
+    }, 1000 / defaultFPS);
   };
 
   window.stopPreviewAnimation = () => {
@@ -320,7 +317,7 @@ window.onload = () => {
   };
 
   window.setPreviewSpeed = (fps) => {
-    previewFPS = fps;
+    defaultFPS = fps;
     if (previewInterval) restartPreviewAnimation();
   };
 

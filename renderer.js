@@ -14,6 +14,9 @@ let previewInterval = null;
 let defaultFPS = 30;
 let previewLoop = true;
 
+let frames = [];
+let currentFrame = 0;
+
 window.startCapture = () => {
   ffmpegCommand = captureArea({
     x: 0,
@@ -137,11 +140,6 @@ window.extractFrames = () => {
     }
   });
 };
-
-
-
-let frames = [];
-let currentFrame = 0;
 
 function loadFrames() {
 
@@ -335,12 +333,11 @@ window.onload = () => {
   window.startPreviewAnimation = () => {
     if (previewInterval || frames.length === 0) return;
 
-    let i = 0;
     previewInterval = setInterval(() => {
-      showFrame(i);
-      i++;
-      if (i >= frames.length) {
-        if (previewLoop) i = 0;
+      showFrame(currentFrame);
+      currentFrame++;
+      if (currentFrame >= frames.length) {
+        if (previewLoop) currentFrame = 0;
         else stopPreviewAnimation();
       }
     }, 1000 / defaultFPS);

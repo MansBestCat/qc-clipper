@@ -159,6 +159,9 @@ function loadFrames() {
 }
 
 function showFrame(index) {
+  if (frames.length ===0) {
+    return;
+  }
   const img = document.getElementById('framePreview');
   img.src = frames[index].file;
 
@@ -306,7 +309,7 @@ window.onload = () => {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (['ArrowRight', 'ArrowLeft'].includes(e.key)) {
+    if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) {
       e.preventDefault(); // Stop browser from scrolling the page
     }
 
@@ -316,6 +319,14 @@ window.onload = () => {
       window.prevFrame();
     } else if (e.key === 'Delete') {
       window.deleteFrame();
+    } else if (e.key === 'Home') {
+      currentFrame = 0;
+      showFrame(currentFrame);
+      renderFilmstrip();
+    } else if (e.key === 'End') {
+      currentFrame = frames.length - 1;
+      showFrame(currentFrame);
+      renderFilmstrip();
     }
   });
 

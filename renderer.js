@@ -226,8 +226,10 @@ window.nextFrame = () => {
   stopPreviewAnimation();
   if (currentFrame < frames.length - 1) {
     currentFrame++;
-    showFrame(currentFrame);
+  } else {
+    currentFrame=0;
   }
+  showFrame(currentFrame);
 };
 
 window.prevFrame = () => {

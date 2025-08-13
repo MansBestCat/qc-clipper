@@ -463,5 +463,23 @@ window.onload = () => {
     showFrame(currentFrame);
     console.log(`📌 Pasted ${clipboardFrames.length} frame(s) at index ${currentFrame}`);
   };
+  
+  window.duplicateFramesYoyo = () => {
+    if (frames.length === 0) return;
+
+    pushUndoState(); // Save current state before modifying
+
+    // Clone all frames in reverse order
+    const reversedClones = [...frames].reverse().map(f => ({
+      ...f,
+      selected: false // Ensure clones aren't selected
+    }));
+
+    // Append reversed clones to the end
+    frames.push(...reversedClones);
+
+    renderFilmstrip();
+    console.log(`🔁 Yoyo effect applied: ${reversedClones.length} frame(s) duplicated in reverse`);
+  };
 
 };

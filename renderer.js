@@ -390,11 +390,6 @@ window.onload = () => {
     previewInterval = null;
   };
 
-  window.setPreviewSpeed = (fps) => {
-    defaultFPS = fps;
-    if (previewInterval) restartPreviewAnimation();
-  };
-
   window.togglePreviewLoop = () => {
     previewLoop = !previewLoop;
     console.log(`🔁 Loop is now ${previewLoop ? 'enabled' : 'disabled'}`);

@@ -179,7 +179,7 @@ function handlePointerClick(event, index) {
     frames.forEach((f, i) => f.selected = i === index);
   }
   currentFrame = index;
-  renderFilmstrip();
+  updateFilmstripSelections();
 }
 
 function renderFilmstrip() {
@@ -188,6 +188,7 @@ function renderFilmstrip() {
 
   frames.forEach((frame, i) => {
     const container = document.createElement('div');
+    container.id = `container-${i}`;
     container.style.display = 'inline-block';
     container.style.textAlign = 'center';
     container.style.marginRight = '8px';
@@ -200,6 +201,7 @@ function renderFilmstrip() {
     }
 
     const thumb = document.createElement('img');
+    thumb.id = `thumb-${i}`;
     thumb.src = frame.file;
     thumb.width = 80;
     thumb.style.cursor = 'pointer';
@@ -222,6 +224,23 @@ function renderFilmstrip() {
   });
 }
 
+/** Does not create elements, just updates selections */
+function updateFilmstripSelections() {
+
+  frames.forEach((frame, i) => {
+    
+    const container = document.getElementById(`container-${i}`);
+    if (frame.selected || i === currentFrame) {
+      container.classList.add('selected-frame'); 
+    } else {
+      container.classList.remove('selected-frame'); 
+    }    
+
+    const thumb =document.getElementById(`thumb-${i}`);    
+    thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
+    
+  });
+}
 window.nextFrame = () => {
   stopPreviewAnimation();
   if (currentFrame < frames.length - 1) {
@@ -354,11 +373,11 @@ window.onload = () => {
     } else if (e.key === 'Home') {
       currentFrame = 0;
       showFrame(currentFrame);
-      renderFilmstrip();
+      updateFilmstripSelections();
     } else if (e.key === 'End') {
       currentFrame = frames.length - 1;
       showFrame(currentFrame);
-      renderFilmstrip();
+      updateFilmstripSelections();
     } else if (e.code === 'Space' ) {
         window.togglePreviewAnimation();
     } else if (e.ctrlKey && e.key === 'z') {

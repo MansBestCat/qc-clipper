@@ -388,6 +388,8 @@ window.onload = () => {
       window.copySelectedFrames();
     } else if (e.ctrlKey && e.key === 'v') {
       window.pasteFramesAtCurrent();
+    } else if (e.key === 'Enter') {
+      window.exportAnimation();
     }
   });
 

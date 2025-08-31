@@ -498,4 +498,18 @@ window.onload = () => {
     console.log(`🔁 Yoyo effect applied: ${reversedClones.length} frame(s) duplicated in reverse`);
   };
 
+  window.reverseFrames = () => {
+    if (frames.length === 0) return;
+
+    pushUndoState(); // Save current state before modifying
+
+    frames.reverse(); // Reverse the array in place
+
+    currentFrame = 0; // Reset to first frame after reversal
+    renderFilmstrip();
+    showFrame(currentFrame);
+
+    console.log(`↩️ Frame order reversed`);
+  };
+
 };

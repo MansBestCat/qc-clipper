@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const frameDir = path.join(__dirname, 'frames');
-  
+
 const capFile = "input.mp4";
 let ffmpegCommand = null;
 
@@ -157,7 +157,7 @@ function loadFrames() {
 }
 
 function showFrame(index) {
-  if (frames.length ===0) {
+  if (frames.length === 0) {
     return;
   }
   const img = document.getElementById('framePreview');
@@ -196,7 +196,7 @@ function renderFilmstrip() {
       container.classList.add('selected-frame');
     }
     container.onpointerdown = (e) => {
-      handlePointerClick( e, i);
+      handlePointerClick(e, i);
       showFrame(currentFrame);
     }
 
@@ -207,7 +207,7 @@ function renderFilmstrip() {
     thumb.style.cursor = 'pointer';
     thumb.style.display = "block";
     thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
-    
+
     const durationInput = document.createElement('input');
     durationInput.type = 'number';
     durationInput.min = 1;
@@ -228,17 +228,17 @@ function renderFilmstrip() {
 function updateFilmstripSelections() {
 
   frames.forEach((frame, i) => {
-    
+
     const container = document.getElementById(`container-${i}`);
     if (frame.selected || i === currentFrame) {
-      container.classList.add('selected-frame'); 
+      container.classList.add('selected-frame');
     } else {
-      container.classList.remove('selected-frame'); 
-    }    
+      container.classList.remove('selected-frame');
+    }
 
-    const thumb =document.getElementById(`thumb-${i}`);    
+    const thumb = document.getElementById(`thumb-${i}`);
     thumb.style.border = i === currentFrame ? '4px solid red' : '1px solid #ccc';
-    
+
   });
 }
 window.nextFrame = () => {
@@ -246,7 +246,7 @@ window.nextFrame = () => {
   if (currentFrame < frames.length - 1) {
     currentFrame++;
   } else {
-    currentFrame=0;
+    currentFrame = 0;
   }
   showFrame(currentFrame);
 };
@@ -287,7 +287,7 @@ window.onload = () => {
   videoCapture = document.getElementById('videoCapture');
   videoCropped = document.getElementById('videoCropped');
 
-  videoCapture.addEventListener('loadedmetadata', () =>  {
+  videoCapture.addEventListener('loadedmetadata', () => {
     const width = videoCapture.videoWidth;
     const height = videoCapture.videoHeight;
 
@@ -301,7 +301,7 @@ window.onload = () => {
     console.log(`Captured video dimensions: ${width}x${height}`);
   });
 
-  videoCropped.addEventListener('loadedmetadata', () =>  {
+  videoCropped.addEventListener('loadedmetadata', () => {
     const width = videoCropped.videoWidth;
     const height = videoCropped.videoHeight;
 
@@ -378,8 +378,8 @@ window.onload = () => {
       currentFrame = frames.length - 1;
       showFrame(currentFrame);
       updateFilmstripSelections();
-    } else if (e.code === 'Space' ) {
-        window.togglePreviewAnimation();
+    } else if (e.code === 'Space') {
+      window.togglePreviewAnimation();
     } else if (e.ctrlKey && e.key === 'z') {
       window.undo();
     } else if (e.ctrlKey && e.key === 'y') {
@@ -470,7 +470,7 @@ window.onload = () => {
 
     pushUndoState(); // Save current state
 
-    frames.splice(currentFrame +1, 0, ...clipboardFrames.map(f => ({ ...f })));
+    frames.splice(currentFrame + 1, 0, ...clipboardFrames.map(f => ({ ...f })));
 
     // Optional: move currentFrame to the end of pasted section
     //currentFrame += clipboardFrames.length;
@@ -479,7 +479,7 @@ window.onload = () => {
     showFrame(currentFrame);
     console.log(`📌 Pasted ${clipboardFrames.length} frame(s) at index ${currentFrame}`);
   };
-  
+
   window.duplicateFramesYoyo = () => {
     if (frames.length === 0) return;
 
@@ -512,4 +512,39 @@ window.onload = () => {
     console.log(`↩️ Frame order reversed`);
   };
 
+  window.exportFrames = () => {
+    if (frames.length === 0) {
+      alert('No frames to export.');
+      return;
+    }
+
+    const outDir = path.join(__dirname, 'frames_exported');
+
+    try {
+      if (fs.existsSync(outDir)) {
+        // Clear previous export so it stays contiguous
+        for (const f of fs.readdirSync(outDir)) {
+          if (f.endsWith('.webp')) fs.unlinkSync(path.join(outDir, f));
+        }
+      } else {
+        fs.mkdirSync(outDir, { recursive: true });
+      }
+    } catch (err) {
+      console.error('❌ Failed to prepare frames_exported:', err);
+      return;
+    }
+
+    let n = 0;
+    for (const frame of frames) {
+      const dest = path.join(outDir, `frame_${String(n).padStart(3, '0')}.webp`);
+      try {
+        fs.copyFileSync(frame.file, dest);
+        n++;
+      } catch (err) {
+        console.error(`❌ Failed to copy ${frame.file}:`, err);
+      }
+    }
+
+    console.log(`✅ Exported ${n} frame(s) to ${outDir}`);
+  };
 };
